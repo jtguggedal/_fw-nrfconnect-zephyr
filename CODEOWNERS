@@ -135,6 +135,7 @@
 /dts/arm/st/                              @erwango
 /dts/arm/nordic/                          @ioannisg @carlescufi
 /dts/bindings/can/                        @alexanderwachter
+/dts/bindings/sensor/*bme680*             @BoschSensortec
 /ext/fs/                                  @nashif @ramakrishnapallala
 /ext/hal/cmsis/                           @MaureenHelm @galak
 /ext/hal/nordic/                          @carlescufi @anangl
