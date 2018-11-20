@@ -21,14 +21,21 @@
 		compatible = "gpio-keys";
 		#address-cells = <1>;
 		#size-cells = <0>;
+
 		button0: button_0 {
 			gpios = <&gpio0 26 GPIO_PUD_PULL_UP>;
 			label = "Button 1";
+		};
+
+		button1: button_1 {
+			gpios = <&gpio0 14 GPIO_PUD_PULL_UP>;
+			label = "Button 2";
 		};
 	};
 
 	aliases {
 		sw0 = &button0;
+		sw1 = &button1;
 	};
 
 	sram0_bsd: memory@20010000 {
@@ -45,7 +52,7 @@
 	status = "ok";
 };
 
-&i2c1 {
+&i2c0 {
 	status = "ok";
 	sda-pin = <11>;
 	scl-pin = <12>;
@@ -56,6 +63,24 @@
 	sck-pin = <6>;
 	mosi-pin = <7>;
 	miso-pin = <8>;
+};
+
+&uart0 {
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <18>;
+	rx-pin = <19>;
+	rts-pin = <20>;
+	cts-pin = <21>;
+};
+
+&uart1 {
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <22>;
+	rx-pin = <23>;
+	rts-pin = <24>;
+	cts-pin = <25>;
 };
 
 &flash0 {
