@@ -52,13 +52,13 @@
 	status = "ok";
 };
 
-&i2c0 {
+&i2c2 {
 	status = "ok";
 	sda-pin = <11>;
 	scl-pin = <12>;
 };
 
-&spi0 {
+&spi3 {
 	status = "ok";
 	sck-pin = <6>;
 	mosi-pin = <7>;

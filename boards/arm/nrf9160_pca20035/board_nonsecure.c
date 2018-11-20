@@ -14,7 +14,7 @@
 
 #define POWER_CTRL_1V8_PIN		3
 #define POWER_CTRL_3V3_PIN		28
-#define ADP5360_I2C_DEV_NAME		CONFIG_I2C_0_NAME
+#define ADP5360_I2C_DEV_NAME		CONFIG_I2C_2_NAME
 #define LC_MAX_READ_LENGTH		128
 
 static struct device *gpio_dev;
