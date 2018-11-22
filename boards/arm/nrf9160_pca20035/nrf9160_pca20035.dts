@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2017 Linaro Limited
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -13,6 +12,7 @@
 	compatible = "nordic,pca20035", "nordic,nrf9160-xxaa";
 
 	chosen {
+		zephyr,console = &uart0;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 	};
@@ -26,16 +26,10 @@
 			gpios = <&gpio0 26 GPIO_PUD_PULL_UP>;
 			label = "Button 1";
 		};
-
-		button1: button_1 {
-			gpios = <&gpio0 14 GPIO_PUD_PULL_UP>;
-			label = "Button 2";
-		};
 	};
 
 	aliases {
 		sw0 = &button0;
-		sw1 = &button1;
 	};
 
 	sram0_bsd: memory@20010000 {
