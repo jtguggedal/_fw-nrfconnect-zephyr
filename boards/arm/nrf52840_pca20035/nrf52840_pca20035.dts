@@ -40,20 +40,20 @@
 	compatible = "nordic,nrf-uart";
 	current-speed = <115200>;
 	status = "ok";
-	tx-pin = <18>;
-	rx-pin = <15>;
-	rts-pin = <20>;
-	cts-pin = <21>;
+	tx-pin = <25>;
+	rx-pin = <32>;
+	rts-pin = <19>;
+	cts-pin = <22>;
 };
 
 #ifdef CONFIG_UART_1_NRF_UARTE
 &uart1 {
 	current-speed = <115200>;
 	status = "ok";
-	tx-pin = <25>;
-	rx-pin = <32>;
-	rts-pin = <19>;
-	cts-pin = <22>;
+	tx-pin = <18>;
+	rx-pin = <15>;
+	rts-pin = <20>;
+	cts-pin = <21>;
 };
 #endif
 
