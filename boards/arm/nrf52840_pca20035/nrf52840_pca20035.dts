@@ -46,16 +46,14 @@
 	cts-pin = <22>;
 };
 
-#ifdef CONFIG_UART_1_NRF_UARTE
 &uart1 {
 	current-speed = <115200>;
 	status = "ok";
 	tx-pin = <18>;
 	rx-pin = <15>;
-	rts-pin = <20>;
-	cts-pin = <21>;
+	rts-pin = <21>;
+	cts-pin = <20>;
 };
-#endif
 
 &flash0 {
 	/*
