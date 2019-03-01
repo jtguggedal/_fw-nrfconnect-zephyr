@@ -8,11 +8,10 @@
 
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(net_google_iot_mqtt, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(net_google_iot_mqtt, LOG_LEVEL_DBG);
 
 #include <zephyr.h>
 
-#include "dhcp.h"
 #include "protocol.h"
 
 #include <net/sntp.h>
@@ -90,9 +89,6 @@ top:
 
 	a = &net_sin(addr->ai_addr)->sin_addr;
 
-	LOG_INF("  Got %s",
-		log_strdup(net_addr_ntop(addr->ai_family, a,
-		hr_addr, sizeof(hr_addr))));
 
 }
 
@@ -114,10 +110,6 @@ void main(void)
 
 	LOG_INF("Main entered");
 
-	app_dhcpv4_startup();
-
-	LOG_INF("Should have DHCPv4 lease at this point.");
-
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = 0;
@@ -132,20 +124,17 @@ void main(void)
 		return;
 	}
 
-
 	LOG_INF("DNS resolved for time.google.com:123");
 	time_base = 0;
-	inet_ntop(AF_INET, &net_sin(haddr->ai_addr)->sin_addr, time_ip,
-			haddr->ai_addrlen);
+	// inet_ntop(AF_INET, &net_sin(haddr->ai_addr)->sin_addr, time_ip,
+	// 		haddr->ai_addrlen);
 	show_addrinfo(haddr);
-	do_sntp(haddr);
-	freeaddrinfo(haddr);
+	// do_sntp(haddr);
+	// freeaddrinfo(haddr);
 
 	/* early return if we failed to acquire time */
 	if (time_base == 0) {
 		LOG_ERR("Failed to get NTP time");
-		return;
 	}
-
 	mqtt_startup("mqtt.googleapis.com", 8883);
 }

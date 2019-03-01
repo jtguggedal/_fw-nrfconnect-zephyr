@@ -139,6 +139,10 @@ void SystemInit(void)
     #endif
     
     SystemCoreClockUpdate();
+
+#if defined(NRF_TRUSTZONE_NONSECURE)
+        *(volatile uint32_t *)0x40005C04 = 0x02ul; 
+    #endif
 }
 
 

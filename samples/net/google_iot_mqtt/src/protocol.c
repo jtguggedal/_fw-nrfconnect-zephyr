@@ -15,16 +15,8 @@ LOG_MODULE_DECLARE(net_google_iot_mqtt, LOG_LEVEL_DBG);
 #include <zephyr/jwt.h>
 #include <entropy.h>
 
-#include <net/tls_credentials.h>
 #include <net/mqtt.h>
 
-#include <mbedtls/platform.h>
-#include <mbedtls/net.h>
-#include <mbedtls/ssl.h>
-#include <mbedtls/entropy.h>
-#include <mbedtls/ctr_drbg.h>
-
-#include <mbedtls/debug.h>
 
 extern s64_t time_base;
 
@@ -186,13 +178,13 @@ void mqtt_evt_handler(struct mqtt_client *const client,
 static int wait_for_input(int timeout)
 {
 	int res;
-	struct zsock_pollfd fds[1] = {
+	struct pollfd fds[1] = {
 		[0] = {.fd = client_ctx.transport.tls.sock,
 		      .events = ZSOCK_POLLIN,
 		      .revents = 0},
 	};
 
-	res = zsock_poll(fds, 1, timeout);
+	res = poll(fds, 1, timeout);
 	if (res < 0) {
 		LOG_ERR("poll read event error");
 		return -errno;
@@ -219,19 +211,10 @@ void mqtt_startup(char *hostname, int port)
 	struct sockaddr_in *broker4 = (struct sockaddr_in *)&broker;
 	struct mqtt_client *client = &client_ctx;
 	struct jwt_builder jb;
-	static struct zsock_addrinfo hints;
-	struct zsock_addrinfo *haddr;
+	static struct addrinfo hints;
+	struct addrinfo *haddr;
 	int res = 0;
 	int retries = 5;
-
-	mbedtls_platform_set_time(my_k_time);
-
-	err = tls_credential_add(1, TLS_CREDENTIAL_CA_CERTIFICATE,
-				 globalsign_certificate,
-				 sizeof(globalsign_certificate));
-	if (err < 0) {
-		LOG_ERR("Failed to register public certificate: %d", err);
-	}
 
 	while (retries) {
 		hints.ai_family = AF_INET;

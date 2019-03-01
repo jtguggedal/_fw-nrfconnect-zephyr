@@ -64,7 +64,7 @@ static void send_task_list_cb(void)
 			 (uintptr_t)&thread->entry);
 		SEGGER_SYSVIEW_SendTaskInfo(&(SEGGER_SYSVIEW_TASKINFO) {
 			.TaskID = (u32_t)(uintptr_t)thread,
-			.sName = name,
+			.sName = thread->name ? thread->name : name,
 			.StackSize = thread->stack_info.size,
 			.StackBase = thread->stack_info.start,
 			.Prio = thread->base.prio,
