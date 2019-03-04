@@ -193,7 +193,7 @@ static int bme680_sample_fetch(struct device *dev, enum sensor_channel chan)
 	int size = BME680_LEN_FIELD;
 	int ret;
 
-	__ASSERT_NO_MSG(chan == SENSOR_CHAN_ALL);
+	//__ASSERT_NO_MSG(chan == SENSOR_CHAN_ALL);
 
 	ret = bme680_reg_read(data, BME680_REG_FIELD0, buff, size);
 	if (ret < 0) {
@@ -345,9 +345,9 @@ static int bme680_chip_init(struct device *dev)
 	}
 
 	if (data->chip_id == BME680_CHIP_ID) {
-		LOG_ERR("BME680 chip detected");
+		printk("BME680 chip detected");
 	} else {
-		LOG_ERR("Bad BME680 chip id 0x%x", data->chip_id);
+		printk("Bad BME680 chip id 0x%x", data->chip_id);
 		return -ENOTSUP;
 	}
 
@@ -400,7 +400,7 @@ static int bme680_init(struct device *dev)
 	data->i2c_master = device_get_binding(
 		DT_BOSCH_BME680_0_BUS_NAME);
 	if (!data->i2c_master) {
-		LOG_ERR("I2C master not found: %s",
+		printk("I2C master not found: %s",
 			    DT_BOSCH_BME680_0_BUS_NAME);
 		return -EINVAL;
 	}
