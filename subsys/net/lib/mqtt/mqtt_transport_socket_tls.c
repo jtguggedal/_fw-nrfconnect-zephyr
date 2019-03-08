@@ -36,13 +36,17 @@ int mqtt_client_tls_connect(struct mqtt_client *client)
 		return -errno;
 	}
 
+	u8_t d = 1;
+
 	MQTT_TRC("Created socket %d", client->transport.tls.sock);
+		printk("hello: %d\n", d++);
 
 	/* Set secure socket options. */
 	ret = setsockopt(client->transport.tls.sock, SOL_TLS, TLS_PEER_VERIFY,
 			 &tls_config->peer_verify,
 			 sizeof(tls_config->peer_verify));
 	if (ret < 0) {
+		printk("%d\n", d++);
 		goto error;
 	}
 
@@ -60,6 +64,8 @@ int mqtt_client_tls_connect(struct mqtt_client *client)
 				 TLS_SEC_TAG_LIST, tls_config->sec_tag_list,
 				 sizeof(sec_tag_t) * tls_config->sec_tag_count);
 		if (ret < 0) {
+		printk("It fails hasdsdere :( , %d\n", ret);
+		printk("%d\n", d++);
 			goto error;
 		}
 	}
@@ -69,6 +75,8 @@ int mqtt_client_tls_connect(struct mqtt_client *client)
 				 TLS_HOSTNAME, tls_config->hostname,
 				 strlen(tls_config->hostname));
 		if (ret < 0) {
+		printk("It fails herasasasase :( , %d\n", ret);
+		printk("%d\n", d++);
 			goto error;
 		}
 	}
@@ -82,6 +90,8 @@ int mqtt_client_tls_connect(struct mqtt_client *client)
 	ret = connect(client->transport.tls.sock, client->broker,
 		      peer_addr_size);
 	if (ret < 0) {
+		printk("It fails hssssere :( , %d\n", ret);
+		printk("%d\n", d++);
 		goto error;
 	}
 

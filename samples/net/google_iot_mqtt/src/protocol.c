@@ -35,7 +35,7 @@ static u8_t subs_topic_str[] = CONFIG_CLOUD_SUBSCRIBE_CONFIG;
 static struct mqtt_topic subs_topic;
 static struct mqtt_subscription_list subs_list;
 #endif
-static u8_t client_username[] = "none";
+static u8_t client_username[] = "unused";
 static u8_t pub_topic[] = CONFIG_CLOUD_PUBLISH_TOPIC;
 
 static struct mqtt_publish_param pub_data;
@@ -56,12 +56,7 @@ static u8_t rx_buffer[1024];
 static u8_t tx_buffer[1024];
 
 static sec_tag_t m_sec_tags[] = {
-#if defined(MBEDTLS_X509_CRT_PARSE_C)
-		1,
-#endif
-#if defined(MBEDTLS_KEY_EXCHANGE__SOME__PSK_ENABLED)
-		APP_PSK_TAG,
-#endif
+	16842753
 };
 
 /* Zephyr implementation of POSIX `time`.  Has to be called k_time
@@ -288,6 +283,7 @@ void mqtt_startup(char *hostname, int port)
 				&client->transport.tls.config;
 
 		tls_config->peer_verify = 2;
+		tls_config->cipher_count = 0;
 		tls_config->cipher_list = NULL;
 		tls_config->sec_tag_list = m_sec_tags;
 		tls_config->sec_tag_count = ARRAY_SIZE(m_sec_tags);
