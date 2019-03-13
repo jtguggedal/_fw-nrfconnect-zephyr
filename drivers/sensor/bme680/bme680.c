@@ -19,6 +19,9 @@
 #include <misc/__assert.h>
 #include <sensor.h>
 
+LOG_MODULE_REGISTER(bme680, CONFIG_SENSOR_LOG_LEVEL);
+#include <logging/log.h>
+
 static int bme680_reg_read(struct bme680_data *data, u8_t start, u8_t *buf,
 			   int size)
 {
