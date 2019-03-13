@@ -196,7 +196,7 @@ static int bme680_sample_fetch(struct device *dev, enum sensor_channel chan)
 	int size = BME680_LEN_FIELD;
 	int ret;
 
-	__ASSERT_NO_MSG(chan == SENSOR_CHAN_ALL);
+	/* __ASSERT_NO_MSG(chan == SENSOR_CHAN_ALL); */
 
 	ret = bme680_reg_read(data, BME680_REG_FIELD0, buff, size);
 	if (ret < 0) {
