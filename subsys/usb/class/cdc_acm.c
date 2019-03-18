@@ -64,7 +64,7 @@ LOG_MODULE_REGISTER(usb_cdc_acm);
 #define CDC_ACM_DEFAUL_BAUDRATE {sys_cpu_to_le32(115200), 0, 0, 8}
 
 /* Size of the internal buffer used for storing received data */
-#define CDC_ACM_BUFFER_SIZE (2 * CONFIG_CDC_ACM_BULK_EP_MPS)
+#define CDC_ACM_BUFFER_SIZE 2048 /*(2 * CONFIG_CDC_ACM_BULK_EP_MPS) */
 
 
 /* Max CDC ACM class request max data size */
@@ -298,8 +298,7 @@ static void cdc_acm_bulk_in(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 	k_sem_give(&poll_wait_sem);
 	/* Call callback only if tx irq ena */
 	if (dev_data->cb && dev_data->tx_irq_ena) {
-		//_work_submit(&dev_data->cb_work);
-		dev_data->cb(dev_data->cb_data);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
@@ -316,7 +315,7 @@ static void cdc_acm_bulk_out(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 	struct cdc_acm_dev_data_t *dev_data;
 	u32_t bytes_to_read, i, j, buf_head;
 	struct usb_dev_data *common;
-	u8_t tmp_buf[4];
+	u8_t tmp_buf[CDC_ACM_BUFFER_SIZE];
 
 	ARG_UNUSED(ep_status);
 
@@ -337,23 +336,21 @@ static void cdc_acm_bulk_out(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 	 * Quark SE USB controller is always storing data
 	 * in the FIFOs per 32-bit words.
 	 */
-	for (i = 0U; i < bytes_to_read; i += 4) {
-		usb_read(ep, tmp_buf, 4, NULL);
+	for (i = 0U; i < bytes_to_read; i += 1) {
+		usb_read(ep, tmp_buf, CDC_ACM_BUFFER_SIZE, NULL);
 
-		for (j = 0U; j < 4; j++) {
-			if (i + j == bytes_to_read) {
-				/* We read all the data */
-				break;
-			}
+		if (i == bytes_to_read) {
+			/* We read all the data */
+			break;
+		}
 
-			if (((buf_head + 1) % CDC_ACM_BUFFER_SIZE) ==
-			    dev_data->rx_buf_tail) {
-				/* FIFO full, discard data */
-				LOG_ERR("CDC buffer full!");
-			} else {
-				dev_data->rx_buf[buf_head] = tmp_buf[j];
-				buf_head = (buf_head + 1) % CDC_ACM_BUFFER_SIZE;
-			}
+		if (((buf_head + 1) % CDC_ACM_BUFFER_SIZE) ==
+			dev_data->rx_buf_tail) {
+			/* FIFO full, discard data */
+			printk("CDC buffer full!");
+		} else {
+			dev_data->rx_buf[buf_head] = tmp_buf[i];
+			buf_head = (buf_head + 1) % CDC_ACM_BUFFER_SIZE;
 		}
 	}
 
@@ -361,8 +358,7 @@ static void cdc_acm_bulk_out(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 	dev_data->rx_ready = 1U;
 	/* Call callback only if rx irq ena */
 	if (dev_data->cb && dev_data->rx_irq_ena) {
-		dev_data->cb(dev_data->cb_data);
-		//k_work_submit(&dev_data->cb_work);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
@@ -670,8 +666,7 @@ static void cdc_acm_irq_tx_enable(struct device *dev)
 
 	dev_data->tx_irq_ena = 1U;
 	if (dev_data->cb && dev_data->tx_ready) {
-		dev_data->cb(dev_data->cb_data);
-		//k_work_submit(&dev_data->cb_work);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
@@ -720,8 +715,7 @@ static void cdc_acm_irq_rx_enable(struct device *dev)
 
 	dev_data->rx_irq_ena = 1U;
 	if (dev_data->cb && dev_data->rx_ready) {
-		dev_data->cb(dev_data->cb_data);
-		//k_work_submit(&dev_data->cb_work);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
