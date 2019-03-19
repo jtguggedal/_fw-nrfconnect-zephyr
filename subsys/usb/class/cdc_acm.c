@@ -298,8 +298,7 @@ static void cdc_acm_bulk_in(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 	k_sem_give(&poll_wait_sem);
 	/* Call callback only if tx irq ena */
 	if (dev_data->cb && dev_data->tx_irq_ena) {
-		//_work_submit(&dev_data->cb_work);
-		dev_data->cb(dev_data->cb_data);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
@@ -361,8 +360,7 @@ static void cdc_acm_bulk_out(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 	dev_data->rx_ready = 1U;
 	/* Call callback only if rx irq ena */
 	if (dev_data->cb && dev_data->rx_irq_ena) {
-		dev_data->cb(dev_data->cb_data);
-		//k_work_submit(&dev_data->cb_work);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
@@ -670,8 +668,7 @@ static void cdc_acm_irq_tx_enable(struct device *dev)
 
 	dev_data->tx_irq_ena = 1U;
 	if (dev_data->cb && dev_data->tx_ready) {
-		dev_data->cb(dev_data->cb_data);
-		//k_work_submit(&dev_data->cb_work);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
@@ -720,8 +717,7 @@ static void cdc_acm_irq_rx_enable(struct device *dev)
 
 	dev_data->rx_irq_ena = 1U;
 	if (dev_data->cb && dev_data->rx_ready) {
-		dev_data->cb(dev_data->cb_data);
-		//k_work_submit(&dev_data->cb_work);
+		k_work_submit(&dev_data->cb_work);
 	}
 }
 
