@@ -185,10 +185,10 @@ struct cdc_acm_dev_data_t {
 	void *cb_data;
 	struct k_work cb_work;
 	/* Tx ready status. Signals when */
-	u8_t tx_ready;
-	u8_t rx_ready;                 /* Rx ready status */
-	u8_t tx_irq_ena;               /* Tx interrupt enable status */
-	u8_t rx_irq_ena;               /* Rx interrupt enable status */
+	s8_t tx_ready;
+	s8_t rx_ready;                 /* Rx ready status */
+	s8_t tx_irq_ena;               /* Tx interrupt enable status */
+	s8_t rx_irq_ena;               /* Rx interrupt enable status */
 	u8_t rx_buf[CDC_ACM_BUFFER_SIZE];/* Internal Rx buffer */
 	u32_t rx_buf_head;             /* Head of the internal Rx buffer */
 	u32_t rx_buf_tail;             /* Tail of the internal Rx buffer */
@@ -294,7 +294,7 @@ static void cdc_acm_bulk_in(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 
 	dev_data = CONTAINER_OF(common, struct cdc_acm_dev_data_t, common);
 
-	dev_data->tx_ready = 1U;
+	dev_data->tx_ready = 1;
 	k_sem_give(&poll_wait_sem);
 	/* Call callback only if tx irq ena */
 	if (dev_data->cb && dev_data->tx_irq_ena) {
@@ -357,7 +357,7 @@ static void cdc_acm_bulk_out(u8_t ep, enum usb_dc_ep_cb_status_code ep_status)
 	}
 
 	dev_data->rx_buf_head = buf_head;
-	dev_data->rx_ready = 1U;
+	dev_data->rx_ready = 1;
 	/* Call callback only if rx irq ena */
 	if (dev_data->cb && dev_data->rx_irq_ena) {
 		k_work_submit(&dev_data->cb_work);
@@ -595,7 +595,7 @@ static int cdc_acm_fifo_fill(struct device *dev,
 		return 0;
 	}
 
-	dev_data->tx_ready = 0U;
+	dev_data->tx_ready = 0;
 
 	/* FIXME: On Quark SE Family processor, restrict writing more than
 	 * 4 bytes into TX USB Endpoint. When more than 4 bytes are written,
@@ -666,7 +666,7 @@ static void cdc_acm_irq_tx_enable(struct device *dev)
 {
 	struct cdc_acm_dev_data_t * const dev_data = DEV_DATA(dev);
 
-	dev_data->tx_irq_ena = 1U;
+	dev_data->tx_irq_ena = 1;
 	if (dev_data->cb && dev_data->tx_ready) {
 		k_work_submit(&dev_data->cb_work);
 	}
@@ -683,7 +683,7 @@ static void cdc_acm_irq_tx_disable(struct device *dev)
 {
 	struct cdc_acm_dev_data_t * const dev_data = DEV_DATA(dev);
 
-	dev_data->tx_irq_ena = 0U;
+	dev_data->tx_irq_ena = 0;
 }
 
 /**
@@ -715,7 +715,7 @@ static void cdc_acm_irq_rx_enable(struct device *dev)
 {
 	struct cdc_acm_dev_data_t * const dev_data = DEV_DATA(dev);
 
-	dev_data->rx_irq_ena = 1U;
+	dev_data->rx_irq_ena = 1;
 	if (dev_data->cb && dev_data->rx_ready) {
 		k_work_submit(&dev_data->cb_work);
 	}
@@ -732,7 +732,7 @@ static void cdc_acm_irq_rx_disable(struct device *dev)
 {
 	struct cdc_acm_dev_data_t * const dev_data = DEV_DATA(dev);
 
-	dev_data->rx_irq_ena = 0U;
+	dev_data->rx_irq_ena = 0;
 }
 
 /**
